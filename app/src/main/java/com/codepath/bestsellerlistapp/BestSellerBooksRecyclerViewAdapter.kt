@@ -32,13 +32,14 @@ class BestSellerBooksRecyclerViewAdapter(
     inner class BookViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
         var mItem: BestSellerBook? = null
         val mBookTitle: TextView = mView.findViewById<View>(id.book_title) as TextView
-        val mBookAuthor: TextView = mView.findViewById<View>(id.book_author) as TextView
-        val mBookRanking: TextView = mView.findViewById<View>(id.ranking) as TextView
+      //  val mBookAuthor: TextView = mView.findViewById<View>(id.book_author) as TextView
+      //  val mBookRanking: TextView = mView.findViewById<View>(id.ranking) as TextView
         val mBookDescription: TextView = mView.findViewById<View>(id.book_description) as TextView
         val mBookImage: ImageView = mView.findViewById<View>(id.book_image) as ImageView
 
         override fun toString(): String {
-            return mBookTitle.toString() + " '" + mBookAuthor.text + "'"
+            return mBookTitle.toString() + " '" + mBookDescription.text + "'"
+            //return mBookTitle.toString() + " '" + mBookAuthor.text + "'"
         }
     }
 
@@ -50,13 +51,13 @@ class BestSellerBooksRecyclerViewAdapter(
 
         holder.mItem = book
         holder.mBookTitle.text = book.title
-        holder.mBookAuthor.text = book.author
+       // holder.mBookAuthor.text = book.author
         holder.mBookDescription.text = book.description
-        holder.mBookRanking.text = book.rank.toString()
+    //    holder.mBookRanking.text = book.rank.toString()
 
         Glide.with(holder.mView)
-            .load(book.bookImageUrl)
-            .centerInside()
+            .load("https://image.tmdb.org/t/p/w500" + book.bookImageUrl)
+          //  .centerInside()
             .into(holder.mBookImage)
 
         holder.mView.setOnClickListener {

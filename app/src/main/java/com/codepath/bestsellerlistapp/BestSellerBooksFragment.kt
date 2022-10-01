@@ -58,11 +58,11 @@ class BestSellerBooksFragment : Fragment(), OnListFragmentInteractionListener {
         // Create and set up an AsyncHTTPClient() here
         val client = AsyncHttpClient()
         val params = RequestParams()
-        params["api-key"] = API_KEY
+        params["api_key"] = API_KEY
 
         // Using the client, perform the HTTP request
         client[
-                "https://developers.themoviedb.org/3/movie/now_playing",
+                "https://api.themoviedb.org/3/movie/now_playing",
                 params,
                 object :
                     JsonHttpResponseHandler()
@@ -81,50 +81,56 @@ class BestSellerBooksFragment : Fragment(), OnListFragmentInteractionListener {
                 progressBar.hide()
 
                 //TODO - Parse JSON into Models
+               // Log.d("DEBUG ARRAY", json.jsonArray.toString())
+                val resultsJSON : JSONArray = json.jsonObject.get("results") as JSONArray
+        //        Log.d("DEBUG ARRAY", resultsJSON.toString())
+                val booksRawJSON : String = resultsJSON.toString()
+/*               //val booksRawJSON : String = resultsJSON.get("results").toString()
 
-                val resultsJSON : JSONObject = json.jsonObject.get("results") as JSONObject
-                val booksRawJSON : String = resultsJSON.get("title").toString()
+               //val resultsJSON : JSONObject = json.jsonArray.get("results") as JSONObject
+               val booksRawJSON : String = resultsJSON.get("title").toString()
+*/
+               val gson = Gson()
+               val arrayMovieType = object : TypeToken<List<BestSellerBook>>() {}.type
+         //      val models : List<BestSellerBook> = gson.fromJson(booksRawJSON, arrayBookType)
+               val models : List<BestSellerBook> = gson.fromJson(booksRawJSON,arrayMovieType)
+               recyclerView.adapter = BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
 
-                val gson = Gson()
-                val arrayBookType = object : TypeToken<List<BestSellerBook>>() {}.type
-                val models : List<BestSellerBook> = gson.fromJson(booksRawJSON, arrayBookType)
-                recyclerView.adapter = BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
+               //val models : List<BestSellerBook> = null // Fix me!
 
-                //val models : List<BestSellerBook> = null // Fix me!
+         //      recyclerView.adapter = BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
 
-                recyclerView.adapter = BestSellerBooksRecyclerViewAdapter(models, this@BestSellerBooksFragment)
+               // Look for this in Logcat:
+               Log.d("BestSellerBooksFragment", "response successful")
+               //Log.d("BestSellerBooksFragment", json.toString())
+           }
 
-                // Look for this in Logcat:
-                Log.d("BestSellerBooksFragment", "response successful")
-                //Log.d("BestSellerBooksFragment", json.toString())
-            }
+           /*
+            * The onFailure function gets called when
+            * HTTP response status is "4XX" (eg. 401, 403, 404)
+            */
+           override fun onFailure(
+               statusCode: Int,
+               headers: Headers?,
+               errorResponse: String,
+               t: Throwable?
+           ) {
+               // The wait for a response is over
+               progressBar.hide()
 
-            /*
-             * The onFailure function gets called when
-             * HTTP response status is "4XX" (eg. 401, 403, 404)
-             */
-            override fun onFailure(
-                statusCode: Int,
-                headers: Headers?,
-                errorResponse: String,
-                t: Throwable?
-            ) {
-                // The wait for a response is over
-                progressBar.hide()
+               // If the error is not null, log it!
+               t?.message?.let {
+                   Log.e("BestSellerBooksFragment", errorResponse)
+               }
+           }
+       }]
+   }
 
-                // If the error is not null, log it!
-                t?.message?.let {
-                    Log.e("BestSellerBooksFragment", errorResponse)
-                }
-            }
-        }]
-    }
-
-    /*
-     * What happens when a particular book is clicked.
-     */
-    override fun onItemClick(item: BestSellerBook) {
-        Toast.makeText(context, "test: " + item.title, Toast.LENGTH_LONG).show()
-    }
+   /*
+    * What happens when a particular book is clicked.
+    */
+   override fun onItemClick(item: BestSellerBook) {
+       Toast.makeText(context, "test: " + item.title, Toast.LENGTH_LONG).show()
+   }
 
 }
